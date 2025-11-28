@@ -10,7 +10,7 @@ from yarl import URL
 
 TEMP_DIR = Path(gettempdir())
 
-class LogLevel(str, enum.Enum):  # noqa: WPS600
+class LogLevel(enum.StrEnum):
     """Possible log levels."""
 
     NOTSET = "NOTSET"
@@ -55,7 +55,7 @@ class Settings(BaseSettings):
     db_host: str = "localhost"
     db_port: int = {{cookiecutter.db_info.port}}
     db_user: str = "{{cookiecutter.project_name}}"
-    db_pass: str = "{{cookiecutter.project_name}}"
+    db_pass: str = "{{cookiecutter.project_name}}"  # noqa: S105
     {%- if cookiecutter.db_info.name != "sqlite" %}
     db_base: str = "admin"
     {%- else %}
@@ -85,7 +85,7 @@ class Settings(BaseSettings):
     rabbit_host: str = "{{cookiecutter.project_name}}-rmq"
     rabbit_port: int = 5672
     rabbit_user: str = "guest"
-    rabbit_pass: str = "guest"
+    rabbit_pass: str = "guest"  # noqa: S105
     rabbit_vhost: str = "/"
 
     rabbit_pool_size: int = 2

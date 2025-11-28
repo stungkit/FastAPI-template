@@ -1,13 +1,11 @@
 import asyncio
-import sys
 import uuid
-from asyncio.events import AbstractEventLoop
-from typing import Any, AsyncGenerator, Generator
+from typing import Any, AsyncGenerator
 from unittest.mock import Mock
 
 import pytest
 from fastapi import FastAPI
-from httpx import AsyncClient
+from httpx import AsyncClient, ASGITransport
 
 {%- if cookiecutter.enable_redis == "True" %}
 from fakeredis import FakeServer
@@ -86,14 +84,14 @@ def anyio_backend() -> str:
 
 {%- if cookiecutter.orm == "sqlalchemy" %}
 @pytest.fixture(scope="session")
-async def _engine() -> AsyncGenerator[AsyncEngine, None]:
+async def _engine(anyio_backend: Any) -> AsyncGenerator[AsyncEngine, None]:
     """
     Create engine and databases.
 
     :yield: new engine.
     """
-    from {{cookiecutter.project_name}}.db.meta import meta  # noqa: WPS433
-    from {{cookiecutter.project_name}}.db.models import load_all_models  # noqa: WPS433
+    from {{cookiecutter.project_name}}.db.meta import meta
+    from {{cookiecutter.project_name}}.db.models import load_all_models
 
     load_all_models()
 
@@ -168,8 +166,8 @@ async def initialize_db() -> AsyncGenerator[None, None]:
 
     :yield: new engine.
     """
-    from {{cookiecutter.project_name}}.db.base import meta  # noqa: WPS433
-    from {{cookiecutter.project_name}}.db.models import load_all_models  # noqa: WPS433
+    from {{cookiecutter.project_name}}.db.base import meta
+    from {{cookiecutter.project_name}}.db.models import load_all_models
 
     load_all_models()
 
@@ -216,7 +214,7 @@ async def drop_db() -> None:
     await pool.close()
 
 
-async def create_db() -> None:  # noqa: WPS217
+async def create_db() -> None:
     """Creates database for tests."""
     pool = AsyncConnectionPool(conninfo=str(settings.db_url.with_path("/postgres")), open=False)
     await pool.open(wait=True)
@@ -260,7 +258,7 @@ async def create_tables(connection: AsyncConnection[Any]) -> None:
         ");"
     )
     {%- endif %}
-    pass  # noqa: WPS420
+    pass
 
 
 @pytest.fixture
@@ -350,7 +348,7 @@ async def setup_db() -> AsyncGenerator[None, None]:
     :yield: nothing.
     """
     client = AsyncIOMotorClient(settings.db_url.human_repr())  # type: ignore
-    from {{cookiecutter.project_name}}.db.models import load_all_models  # noqa: WPS433
+    from {{cookiecutter.project_name}}.db.models import load_all_models
     await beanie.init_beanie(
         database=client[settings.db_base],
         document_models=load_all_models(),  # type: ignore
@@ -528,5 +526,5 @@ async def client(
     :param fastapi_app: the application.
     :yield: client for the app.
     """
-    async with AsyncClient(app=fastapi_app, base_url="http://test", timeout=2.0) as ac:
+    async with AsyncClient(transport=ASGITransport(fastapi_app), base_url="http://test", timeout=2.0) as ac:
             yield ac

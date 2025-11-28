@@ -21,8 +21,7 @@
             "{{cookiecutter.project_name}}/web/api/redis",
             "{{cookiecutter.project_name}}/web/gql/redis",
             "{{cookiecutter.project_name}}/services/redis",
-            "tests/test_redis.py",
-            "deploy/kube/redis.yml"
+            "tests/test_redis.py"
         ]
     },
     "RabbitMQ support": {
@@ -31,8 +30,7 @@
             "{{cookiecutter.project_name}}/web/api/rabbit",
             "{{cookiecutter.project_name}}/web/gql/rabbit",
             "{{cookiecutter.project_name}}/services/rabbit",
-            "tests/test_rabbit.py",
-            "deploy/kube/redis.yml"
+            "tests/test_rabbit.py"
         ]
     },
     "Kafka support": {
@@ -44,32 +42,19 @@
             "tests/test_kafka.py"
         ]
     },
-    "Kubernetes": {
-        "enabled": "{{cookiecutter.enable_kube}}",
-        "resources": [
-            "deploy/kube"
-        ]
-    },
     "Database support": {
         "enabled": "{{cookiecutter.db_info.name != 'none'}}",
         "resources": [
             "alembic.ini",
             "{{cookiecutter.project_name}}/web/api/dummy",
             "{{cookiecutter.project_name}}/web/gql/dummy",
-            "tests/test_dummy.py",
-            "deploy/kube/db.yml"
+            "tests/test_dummy.py"
         ]
     },
     "Beanie support": {
         "enabled": "{{cookiecutter.db_info.name == 'mongodb'}}",
         "resources": [
             "{{cookiecutter.project_name}}/db_beanie"
-        ]
-    },
-    "Postgres and MySQL support": {
-        "enabled": "{{cookiecutter.db_info.name not in ['sqlite', 'mongodb']}}",
-        "resources": [
-            "deploy/kube/db.yml"
         ]
     },
     "Migrations": {
@@ -79,7 +64,8 @@
             "{{cookiecutter.project_name}}/db_sa/migrations",
             "{{cookiecutter.project_name}}/db_ormar/migrations",
             "{{cookiecutter.project_name}}/db_tortoise/migrations",
-            "{{cookiecutter.project_name}}/db_piccolo/migrations"
+            "{{cookiecutter.project_name}}/db_piccolo/migrations",
+            "{{cookiecutter.project_name}}/db_beanie/migrations"
         ]
     },
     "Alembic migrations": {
